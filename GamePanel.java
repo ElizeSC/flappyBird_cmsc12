@@ -37,14 +37,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
     private double score = 0;
     private int highScore = 0;
     private boolean gameOver = false;
-
     private int lastSpeedUpScore=0;
-    
-    //private String playerName;
     private String playerName;
-
     private boolean showRestartPrompt = false;
-    
+
     private Image gameOverBackground;
     
     //making the bird
@@ -194,13 +190,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 
         //score
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 30));
+        g.setFont(new Font("04b08", Font.BOLD, 30));
 
         if (gameOver){
-        	// Semi-transparent black overlay
-            g.setColor(new Color(0, 0, 0, 150));
-            g.fillRect(0, 0, boardWidth, boardHeight);
-            
             // Draw the custom background
             g.drawImage(gameOverBackground, 0, 0, 360, 640, null);
 
@@ -246,10 +238,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
     
 
     public void saveGame() {
-        File gameData = new File("bird.txt");
+        File gameData = new File("gameData.txt");
         
     
-        // First, try to read the existing high score
+        //reading existing score
         try {
             if (gameData.exists()) {
                 BufferedReader br = new BufferedReader(new FileReader(gameData));
@@ -261,10 +253,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
             }
         } catch (IOException | NumberFormatException e) {
             System.err.println("Error reading high score: " + e.getMessage());
-            highScore = 0; // Reset if there's an error reading
+            highScore = 0; // reset if there's an error reading
         }
     
-        // Only save if current score is higher
+        //only save if current score is higher
         if ((int)score > highScore) {
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(gameData));
