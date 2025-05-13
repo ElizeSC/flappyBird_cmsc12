@@ -4,6 +4,8 @@ import java.awt.*;
 public class MainWindow extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainContainer;
+    private StartPanel startPanel;
+    private GamePanel gamePanel;
 
     public MainWindow() {
         setTitle("Flappy Bird");
@@ -15,32 +17,42 @@ public class MainWindow extends JFrame {
         // Create layout and main container
         cardLayout = new CardLayout();
         mainContainer = new JPanel(cardLayout);
-
-        // Create StartPanel, and when Enter is pressed, switch to GamePanel
-        StartPanel startPanel = new StartPanel(() -> {
-            GamePanel gamePanel = new GamePanel();  // No name needed
-            mainContainer.add(gamePanel, "game");
-            cardLayout.show(mainContainer, "game");
-            SwingUtilities.invokeLater(gamePanel::requestFocusInWindow);
-        });
         
-
-        // Add panels to main container
+        // Create StartPanel
+        startPanel = new StartPanel(new StartGameHandler());
         mainContainer.add(startPanel, "start");
-
+        
         add(mainContainer);
         setVisible(true);
 
-        // Start with StartPanel in focus
-        // Change this in MainWindow constructor:
-        SwingUtilities.invokeLater(() -> {
-            startPanel.setFocusable(true);
-            startPanel.requestFocusInWindow();
-            System.out.println("Focus requested for StartPanel");
-        });
-        
+        // Focus on StartPanel
+        startPanel.setFocusable(true);
+        startPanel.requestFocusInWindow();
+        System.out.println("Focus requested for StartPanel");
     }
-
+    
+    // Inner class to handle game start
+    private class StartGameHandler implements Runnable {
+        @Override
+        public void run() {
+            String playerName = startPanel.getPlayerName();
+            if (playerName.trim().isEmpty()) {
+                playerName = "Anonymous";
+            }
+            
+            gamePanel = new GamePanel(playerName);
+            mainContainer.add(gamePanel, "game");
+            cardLayout.show(mainContainer, "game");
+            
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    gamePanel.requestFocusInWindow();
+                }
+            });
+        }
+    }
+    
     public static void main(String[] args) {
         new MainWindow();
     }
